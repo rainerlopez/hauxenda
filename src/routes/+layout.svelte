@@ -3,9 +3,15 @@
 	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
 	import IconButton from '@smui/icon-button';
 	import { page } from '$app/stores';
+	import { pwaInfo } from 'virtual:pwa-info';
 
 	let { children } = $props();
+	const webManifestLink = $derived(pwaInfo ? pwaInfo.webManifest.linkTag : '');
 </script>
+
+<svelte:head>
+	{@html webManifestLink}
+</svelte:head>
 
 <TopAppBar variant="fixed">
 	<Row>
