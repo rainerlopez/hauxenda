@@ -19,6 +19,9 @@
 			<Title>Hauxenda</Title>
 		</Section>
 		<Section align="end" toolbar>
+			<IconButton href="/eventos" aria-label="Ver Eventos">
+				<span class="material-icons">event</span>
+			</IconButton>
 			{#if $page.url.pathname !== '/test-supabase'}
 				<IconButton href="/test-supabase" aria-label="Test Supabase">
 					<span class="material-icons">bug_report</span>
