@@ -2,13 +2,7 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
-	import Card, { Content, Actions } from '@smui/card';
-	import Button from '@smui/button';
-	import Textfield from '@smui/textfield';
-	import HelperText from '@smui/textfield/helper-text';
-	import LinearProgress from '@smui/linear-progress';
-	import Switch from '@smui/switch';
-	import FormField from '@smui/form-field';
+	import { Card, Button, TextField, Switch, LinearProgress, Icon } from 'noph-ui';
 
 	// Interface for event type based on Supabase schema
 	interface Event {
@@ -153,104 +147,96 @@
 		<h1 class="text-2xl font-bold ml-4">Novo Evento</h1>
 	</div>
 
-	<Card class="w-full max-w-3xl mx-auto">
-		<Content class="p-6">
+	<Card variant="outlined" class="w-full max-w-3xl mx-auto p-6">
 			<form on:submit|preventDefault={handleSubmit} class="space-y-6">
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<!-- Título do Evento -->
 					<div class="md:col-span-2">
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={name}
 							label="Nome do Evento *"
 							class="w-full"
-						>
-							<HelperText slot="helper">Nome do seu evento</HelperText>
-						</Textfield>
+							supportingText="Nome do seu evento"
+						/>
 					</div>
 
 					<!-- Descrição -->
 					<div class="md:col-span-2">
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={description}
 							label="Descrição"
-							textarea
-							input$rows="4"
+							type="textarea"
+							rows="4"
 							class="w-full"
-						>
-							<HelperText slot="helper">Detalhes sobre o evento</HelperText>
-						</Textfield>
+							supportingText="Detalhes sobre o evento"
+						/>
 					</div>
 
 					<!-- Local -->
 					<div>
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={location}
 							label="Local"
 							class="w-full"
-						>
-							<HelperText slot="helper">Onde será realizado</HelperText>
-						</Textfield>
+							supportingText="Onde será realizado"
+						/>
 					</div>
 
 					<!-- Data e Hora -->
 					<div>
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={datetime}
 							label="Data e Hora"
 							type="datetime-local"
 							class="w-full"
-						>
-							<HelperText slot="helper">Quando será realizado</HelperText>
-						</Textfield>
+							supportingText="Quando será realizado"
+						/>
 					</div>
 
 					<!-- Convidados -->
 					<div>
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={guests}
 							label="Convidados"
 							class="w-full"
-						>
-							<HelperText slot="helper">Quem está convidado</HelperText>
-						</Textfield>
+							supportingText="Quem está convidado"
+						/>
 					</div>
 
 					<!-- Link -->
 					<div>
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={link}
 							label="Link"
 							type="url"
 							class="w-full"
-						>
-							<HelperText slot="helper">Link opcional para mais informações</HelperText>
-						</Textfield>
+							supportingText="Link opcional para mais informações"
+						/>
 					</div>
 
 					<!-- Chave PIX -->
 					<div>
-						<Textfield
+						<TextField
 							variant="outlined"
 							bind:value={pixKey}
 							label="Chave PIX"
 							class="w-full"
-						>
-							<HelperText slot="helper">Para recebimento de pagamentos</HelperText>
-						</Textfield>
+							supportingText="Para recebimento de pagamentos"
+						/>
 					</div>
 
 					<!-- Opt-in Switch -->
 					<div>
-						<FormField>
+						<div class="flex items-center">
 							<Switch bind:checked={enableOptIn} />
-							<span slot="label">Habilitar Opt-in para este evento</span>
-						</FormField>
+							<span class="ml-2">Habilitar Opt-in para este evento</span>
+						</div>
 						<p class="text-xs text-gray-500 mt-1">
 							Permite que participantes façam opt-in para receber informações
 						</p>
@@ -274,16 +260,20 @@
 								{/if}
 							</div>
 							<div>
-								<Button variant="outlined" component="label" class="mb-2">
-									<span class="material-icons mr-2">upload</span>
-									Selecionar Imagem
+								<label>
+									<Button variant="outlined" class="mb-2">
+										{#snippet start()}
+											<Icon>upload</Icon>
+										{/snippet}
+										Selecionar Imagem
+									</Button>
 									<input
 										type="file"
 										accept="image/*"
 										on:change={handleImageChange}
 										class="hidden"
 									/>
-								</Button>
+								</label>
 								<p class="text-xs text-gray-500">
 									Recomendado: 1200x630px, máximo 5MB
 								</p>
@@ -310,11 +300,10 @@
 
 				<div class="flex justify-end space-x-4">
 					<Button href="/admin/dashboard" variant="outlined">Cancelar</Button>
-					<Button variant="raised" type="submit" disabled={loading}>
+					<Button variant="filled" type="submit" disabled={loading}>
 						{loading ? 'Criando...' : 'Criar Evento'}
 					</Button>
 				</div>
 			</form>
-		</Content>
 	</Card>
 </div>

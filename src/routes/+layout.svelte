@@ -1,7 +1,7 @@
 <script lang="ts">
 	import '../app.css';
-	import TopAppBar, { Row, Section, Title } from '@smui/top-app-bar';
-	import IconButton from '@smui/icon-button';
+	import 'noph-ui/defaultTheme';
+	import { TopAppBar, IconButton } from 'noph-ui';
 	import { page } from '$app/stores';
 	import { pwaInfo } from 'virtual:pwa-info';
 
@@ -13,22 +13,14 @@
 	{@html webManifestLink}
 </svelte:head>
 
-<TopAppBar variant="fixed">
-	<Row>
-		<Section>
-			<Title>Hauxenda</Title>
-		</Section>
-		<Section align="end" toolbar>
-			<IconButton href="/eventos" aria-label="Ver Eventos">
-				<span class="material-icons">event</span>
-			</IconButton>
-			{#if $page.url.pathname !== '/test-supabase'}
-				<IconButton href="/test-supabase" aria-label="Test Supabase">
-					<span class="material-icons">bug_report</span>
-				</IconButton>
-			{/if}
-		</Section>
-	</Row>
+<TopAppBar fixed>
+	<div slot="title">Hauxenda</div>
+	<div slot="actions">
+		<IconButton href="/eventos" aria-label="Ver Eventos" icon="event" />
+		{#if $page.url.pathname !== '/test-supabase'}
+			<IconButton href="/test-supabase" aria-label="Test Supabase" icon="bug_report" />
+		{/if}
+	</div>
 </TopAppBar>
 
 <main class="pt-16">
