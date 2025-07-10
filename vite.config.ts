@@ -6,8 +6,12 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+	optimizeDeps: {
+		exclude: ['@zag-js/avatar', '@zag-js/file-upload', '@zag-js/pagination', '@zag-js/progress', '@zag-js/slider', '@zag-js/switch', '@zag-js/tags-input', '@zag-js/toast', '@zag-js/combobox', '@zag-js/popover', '@zag-js/tooltip', '@zag-js/dialog', '@zag-js/accordion', '@zag-js/radio-group', '@zag-js/tabs', '@zag-js/rating-group', '@zag-js/core', '@zag-js/types', '@zag-js/utils']
+	},
 	plugins: [
 		tailwindcss(),
+		
 		sveltekit(),
 		SvelteKitPWA({
 			registerType: 'autoUpdate',

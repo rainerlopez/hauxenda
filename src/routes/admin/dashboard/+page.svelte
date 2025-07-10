@@ -2,12 +2,11 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { supabase } from '$lib/supabaseClient';
-	import { Card, Button, LinearProgress, Icon, IconButton } from 'noph-ui';
 
 	let user = $page.data.user;
-	let events = [];
+	let events: any[] = [];
 	let loading = true;
-	let error = null;
+	let error: string | null = null;
 
 	onMount(async () => {
 		await fetchEvents();
@@ -30,7 +29,7 @@
 			}
 
 			events = data || [];
-		} catch (err) {
+		} catch (err: any) {
 			console.error('Erro ao buscar eventos:', err);
 			error = 'Não foi possível carregar os eventos. Por favor, tente novamente.';
 		} finally {
@@ -38,7 +37,7 @@
 		}
 	}
 
-	function formatDate(dateString) {
+	function formatDate(dateString: string | null): string {
 		if (!dateString) return '-';
 		const date = new Date(dateString);
 		return new Intl.DateTimeFormat('pt-BR', {
@@ -57,87 +56,91 @@
 
 <div class="container mx-auto px-4 py-6">
 	<div class="flex justify-between items-center mb-6">
-		<h1 class="text-2xl font-bold">Dashboard Admin</h1>
-		<Button href="/admin/events/new" variant="filled">
-			{#snippet start()}
-				<Icon>add</Icon>
-			{/snippet}
+		<h1 class="text-3xl font-bold">Dashboard Admin</h1>
+		<a href="/admin/events/new" class="inline-flex items-center gap-2 bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">
+			<span class="material-symbols-outlined">add</span>
 			Novo Evento
-		</Button>
+		</a>
 	</div>
 
 	<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 		<!-- Card de Boas-vindas -->
-		<Card variant="outlined" class="col-span-1 md:col-span-3 p-6">
-			<h2 class="text-xl font-semibold mb-2">Bem-vindo, {user?.user_metadata?.name || user?.email}!</h2>
-			<p class="text-gray-600">
+		<div class="card p-6 col-span-1 md:col-span-3">
+			<h2 class="text-2xl font-semibold mb-2">Bem-vindo, {user?.user_metadata?.name || user?.email}!</h2>
+			<p class="opacity-75">
 				Este é o seu painel de controle para gerenciar eventos do Hauxenda. Aqui você pode criar, editar e
 				monitorar seus eventos.
 			</p>
-		</Card>
+		</div>
 
 		<!-- Card de Estatísticas -->
-		<Card variant="outlined" class="p-6">
+		<div class="card p-6">
 			<h3 class="text-lg font-semibold mb-2">Total de Eventos</h3>
 			<p class="text-3xl font-bold">{events.length}</p>
-		</Card>
+		</div>
 
 		<!-- Card de Participantes -->
-		<Card variant="outlined" class="p-6">
+		<div class="card p-6">
 			<h3 class="text-lg font-semibold mb-2">Participantes</h3>
 			<p class="text-3xl font-bold">-</p>
-			<p class="text-sm text-gray-500">Em breve</p>
-		</Card>
+			<p class="text-sm opacity-50">Em breve</p>
+		</div>
 
 		<!-- Card de Opt-ins -->
-		<Card variant="outlined" class="p-6">
+		<div class="card p-6">
 			<h3 class="text-lg font-semibold mb-2">Opt-ins</h3>
 			<p class="text-3xl font-bold">-</p>
-			<p class="text-sm text-gray-500">Em breve</p>
-		</Card>
+			<p class="text-sm opacity-50">Em breve</p>
+		</div>
 	</div>
 
 	<!-- Lista de Eventos -->
-	<Card variant="outlined" class="p-6">
-		<h2 class="text-xl font-semibold mb-4">Seus Eventos</h2>
+	<div class="card p-6">
+		<h2 class="text-2xl font-semibold mb-4">Seus Eventos</h2>
 
 		{#if loading}
 			<div class="py-4">
-				<LinearProgress indeterminate />
+				<div class="flex justify-center">
+					<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+				</div>
 			</div>
 		{:else if error}
-			<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+			<div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
 				{error}
 			</div>
-			<Button on:click={fetchEvents} variant="outlined">Tentar Novamente</Button>
+			<button on:click={fetchEvents} class="bg-gray-200 text-gray-800 font-bold py-2 px-4 rounded hover:bg-gray-300 transition-colors">Tentar Novamente</button>
 		{:else if events.length === 0}
 			<div class="text-center py-8">
-				<p class="text-gray-500 mb-4">Você ainda não tem eventos cadastrados.</p>
-				<Button href="/admin/events/new" variant="filled">Criar Primeiro Evento</Button>
+				<p class="opacity-75 mb-4">Você ainda não tem eventos cadastrados.</p>
+				<a href="/admin/events/new" class="inline-block bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors">Criar Primeiro Evento</a>
 			</div>
 		{:else}
-			<div class="overflow-x-auto">
-				<table class="w-full border-collapse">
+			<div class="table-container">
+				<table class="table table-hover">
 					<thead>
-						<tr class="border-b border-gray-200">
-							<th class="py-3 px-4 text-left">Título</th>
-							<th class="py-3 px-4 text-left">Data</th>
-							<th class="py-3 px-4 text-left">Local</th>
-							<th class="py-3 px-4 text-left">Convidados</th>
-							<th class="py-3 px-4 text-left">Ações</th>
+						<tr>
+							<th>Título</th>
+							<th>Data</th>
+							<th>Local</th>
+							<th>Convidados</th>
+							<th>Ações</th>
 						</tr>
 					</thead>
 					<tbody>
 						{#each events as event (event.id)}
-							<tr class="border-b border-gray-100 hover:bg-gray-50">
-								<td class="py-3 px-4">{event.title}</td>
-								<td class="py-3 px-4">{formatDate(event.datetime)}</td>
-								<td class="py-3 px-4">{event.location || '-'}</td>
-								<td class="py-3 px-4">{event.guests || '-'}</td>
-								<td class="py-3 px-4">
+							<tr>
+								<td>{event.name}</td>
+								<td>{formatDate(event.datetime)}</td>
+								<td>{event.location || '-'}</td>
+								<td>{event.guests || '-'}</td>
+								<td>
 									<div class="flex space-x-2">
-										<IconButton href={`/admin/events/${event.id}`} icon="visibility" />
-										<IconButton href={`/admin/events/${event.id}/edit`} icon="edit" />
+										<a href={`/admin/events/${event.id}`} class="inline-flex items-center justify-center w-8 h-8 bg-blue-100 text-blue-600 rounded hover:bg-blue-200 transition-colors">
+										<span class="material-symbols-outlined text-sm">visibility</span>
+									</a>
+									<a href={`/admin/events/${event.id}/edit`} class="inline-flex items-center justify-center w-8 h-8 bg-purple-100 text-purple-600 rounded hover:bg-purple-200 transition-colors">
+										<span class="material-symbols-outlined text-sm">edit</span>
+									</a>
 									</div>
 								</td>
 							</tr>
@@ -146,5 +149,5 @@
 				</table>
 			</div>
 		{/if}
-	</Card>
+	</div>
 </div>

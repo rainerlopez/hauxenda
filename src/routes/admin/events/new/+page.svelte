@@ -2,64 +2,53 @@
 	import { page } from '$app/stores';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
-	import { Card, Button, TextField, Switch, LinearProgress, Icon } from 'noph-ui';
+	import type { Database } from '$lib/database.types';
+	import { ArrowLeft } from '@lucide/svelte';
 
-	// Interface for event type based on Supabase schema
-	interface Event {
-		id: string;
-		name: string;
-		description?: string;
-		location?: string;
-		guests?: string;
-		datetime?: string;
-		link?: string;
-		pix_key?: string;
-		image_url?: string;
-		admin_id: string;
-		created_at?: string;
-		updated_at?: string;
-	}
+	type EventInsert = Database['public']['Tables']['events']['Insert'];
 
 	let user = $page.data.user;
-	let name = ''; // Changed from title to name to match DB schema
-	let description = '';
-	let location = '';
-	let guests = '';
-	let datetime = '';
-	let link = '';
-	let pixKey = '';
-	let enableOptIn = false;
+	
+	let event: EventInsert = {
+		name: '',
+		location: '',
+		datetime: '',
+		guests: '',
+		link: '',
+		pix_key: '',
+		admin_id: user.id
+	};
+
 	let imageFile: File | null = null;
 	let imagePreview = '';
 	let loading = false;
 	let errorMessage = '';
 	let successMessage = '';
 
-	function handleImageChange(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
-		const file = event.target.files[0];
+	function handleImageChange(e: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+		const file = e.currentTarget.files?.[0];
 		if (!file) return;
 
-		// Verificar se é uma imagem
 		if (!file.type.startsWith('image/')) {
-			errorMessage = 'Por favor, selecione um arquivo de imagem válido';
+			errorMessage = 'Por favor, selecione um arquivo de imagem válido.';
+			imageFile = null;
+			imagePreview = '';
 			return;
 		}
 
 		imageFile = file;
-		
-		// Criar preview
 		const reader = new FileReader();
-		reader.onload = (e: ProgressEvent<FileReader>) => {
-			if (e.target && e.target.result) {
-				imagePreview = e.target.result as string;
+		reader.onload = (ev: ProgressEvent<FileReader>) => {
+			if (ev.target?.result) {
+				imagePreview = ev.target.result as string;
 			}
 		};
 		reader.readAsDataURL(file);
 	}
 
 	async function handleSubmit() {
-		if (!name) {
-			errorMessage = 'Por favor, informe pelo menos o nome do evento';
+		if (!event.name) {
+			errorMessage = 'Por favor, informe pelo menos o nome do evento.';
 			return;
 		}
 
@@ -68,32 +57,29 @@
 		successMessage = '';
 
 		try {
-			// 1. Inserir o evento no banco de dados
+			const eventToInsert: EventInsert = {
+				...event,
+				datetime: event.datetime || null,
+				link: event.link || null,
+				pix_key: event.pix_key || null,
+				guests: event.guests || null,
+				location: event.location || null
+			};
+
 			const { data: eventData, error: eventError } = await supabase
 				.from('events')
-				.insert({
-					name, // Changed from title to name
-					description,
-					location,
-					guests,
-					datetime: datetime || null,
-					link: link || null,
-					pix_key: pixKey || null,
-					admin_id: user.id
-				})
+				.insert(eventToInsert)
 				.select()
 				.single();
 
 			if (eventError) throw eventError;
 
-			// 2. Se houver imagem, fazer upload
-			let imageUrl = null;
 			if (imageFile && eventData) {
 				const eventId = eventData.id;
 				const fileExt = imageFile.name.split('.').pop();
-				const fileName = `event-${eventId}.${fileExt}`;
+				const fileName = `public/${eventId}.${fileExt}`;
 
-				const { data: uploadData, error: uploadError } = await supabase.storage
+				const { error: uploadError } = await supabase.storage
 					.from('event-images')
 					.upload(fileName, imageFile, {
 						cacheControl: '3600',
@@ -102,32 +88,24 @@
 
 				if (uploadError) throw uploadError;
 
-				// 3. Obter a URL pública da imagem
-				const { data: urlData } = supabase.storage
-					.from('event-images')
-					.getPublicUrl(fileName);
+				const { data: urlData } = supabase.storage.from('event-images').getPublicUrl(fileName);
 
-				imageUrl = urlData.publicUrl;
-
-				// 4. Atualizar o evento com a URL da imagem
 				const { error: updateError } = await supabase
 					.from('events')
-					.update({ image_url: imageUrl })
+					.update({ image_url: urlData.publicUrl })
 					.eq('id', eventId);
 
 				if (updateError) throw updateError;
 			}
 
-			successMessage = 'Evento criado com sucesso!';
-			
-			// Redirecionar para o dashboard após alguns segundos
+			successMessage = 'Evento criado com sucesso! Redirecionando...';
 			setTimeout(() => {
 				goto('/admin/dashboard');
 			}, 2000);
-			
-		} catch (err) {
+
+		} catch (err: any) {
 			console.error('Erro ao criar evento:', err);
-			errorMessage = 'Ocorreu um erro ao criar o evento. Por favor, tente novamente.';
+			errorMessage = err.message || 'Ocorreu um erro ao criar o evento. Por favor, tente novamente.';
 		} finally {
 			loading = false;
 		}
@@ -138,172 +116,104 @@
 	<title>Novo Evento - Hauxenda Admin</title>
 </svelte:head>
 
-<div class="container mx-auto px-4 py-6">
+<div class="container mx-auto max-w-4xl px-4 py-8">
 	<div class="flex items-center mb-6">
-		<Button href="/admin/dashboard" variant="text">
-			<span class="material-icons mr-1">arrow_back</span>
-			Voltar
-		</Button>
-		<h1 class="text-2xl font-bold ml-4">Novo Evento</h1>
+		<a href="/admin/dashboard" class="flex items-center text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white transition-colors">
+			<ArrowLeft class="w-5 h-5 mr-2" />
+			Voltar para o Dashboard
+		</a>
 	</div>
 
-	<Card variant="outlined" class="w-full max-w-3xl mx-auto p-6">
-			<form on:submit|preventDefault={handleSubmit} class="space-y-6">
-				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-					<!-- Título do Evento -->
-					<div class="md:col-span-2">
-						<TextField
-							variant="outlined"
-							bind:value={name}
-							label="Nome do Evento *"
-							class="w-full"
-							supportingText="Nome do seu evento"
-						/>
-					</div>
+	<h1 class="text-3xl font-bold mb-6">Criar Novo Evento</h1>
 
-					<!-- Descrição -->
-					<div class="md:col-span-2">
-						<TextField
-							variant="outlined"
-							bind:value={description}
-							label="Descrição"
-							type="textarea"
-							rows="4"
-							class="w-full"
-							supportingText="Detalhes sobre o evento"
-						/>
-					</div>
+	<div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 md:p-8">
+		<form on:submit|preventDefault={handleSubmit} class="space-y-6">
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<!-- Nome do Evento -->
+				<div class="md:col-span-2">
+					<label for="eventName" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome do Evento *</label>
+					<input id="eventName" type="text" bind:value={event.name} required class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ex: Casamento de João e Maria" />
+				</div>
 
-					<!-- Local -->
-					<div>
-						<TextField
-							variant="outlined"
-							bind:value={location}
-							label="Local"
-							class="w-full"
-							supportingText="Onde será realizado"
-						/>
-					</div>
+				<!-- Local -->
+				<div>
+					<label for="location" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Local</label>
+					<input id="location" type="text" bind:value={event.location} class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ex: Salão de Festas Central" />
+				</div>
 
-					<!-- Data e Hora -->
-					<div>
-						<TextField
-							variant="outlined"
-							bind:value={datetime}
-							label="Data e Hora"
-							type="datetime-local"
-							class="w-full"
-							supportingText="Quando será realizado"
-						/>
-					</div>
+				<!-- Data e Hora -->
+				<div>
+					<label for="datetime" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data e Hora</label>
+					<input id="datetime" type="datetime-local" bind:value={event.datetime} class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" />
+				</div>
 
-					<!-- Convidados -->
-					<div>
-						<TextField
-							variant="outlined"
-							bind:value={guests}
-							label="Convidados"
-							class="w-full"
-							supportingText="Quem está convidado"
-						/>
-					</div>
+				<!-- Convidados -->
+				<div>
+					<label for="guests" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Convidados</label>
+					<input id="guests" type="text" bind:value={event.guests} class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ex: Família e Amigos" />
+				</div>
 
-					<!-- Link -->
-					<div>
-						<TextField
-							variant="outlined"
-							bind:value={link}
-							label="Link"
-							type="url"
-							class="w-full"
-							supportingText="Link opcional para mais informações"
-						/>
-					</div>
+				<!-- Link -->
+				<div>
+					<label for="link" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Link Adicional</label>
+					<input id="link" type="url" bind:value={event.link} class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="https://..." />
+				</div>
 
-					<!-- Chave PIX -->
-					<div>
-						<TextField
-							variant="outlined"
-							bind:value={pixKey}
-							label="Chave PIX"
-							class="w-full"
-							supportingText="Para recebimento de pagamentos"
-						/>
-					</div>
+				<!-- Chave PIX -->
+				<div class="md:col-span-2">
+					<label for="pix_key" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Chave PIX (Opcional)</label>
+					<input id="pix_key" type="text" bind:value={event.pix_key} class="mt-1 block w-full px-3 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" placeholder="Para presentes ou contribuições" />
+				</div>
 
-					<!-- Opt-in Switch -->
-					<div>
-						<div class="flex items-center">
-							<Switch bind:checked={enableOptIn} />
-							<span class="ml-2">Habilitar Opt-in para este evento</span>
+				<!-- Upload de Imagem -->
+				<div class="md:col-span-2">
+					<div class="block text-sm font-medium text-gray-700 dark:text-gray-300">Imagem do Evento</div>
+					<div class="mt-2 flex items-center space-x-6">
+						<div class="shrink-0">
+							{#if imagePreview}
+								<img class="h-20 w-32 rounded-md object-cover" src={imagePreview} alt="Preview da imagem do evento" />
+							{:else}
+								<div class="h-20 w-32 flex items-center justify-center rounded-md bg-gray-100 dark:bg-gray-700 text-gray-400">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-8 h-8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M20.4 14.5L16 10l-4 4-4-4-2.5 2.5"/></svg>
+								</div>
+							{/if}
 						</div>
-						<p class="text-xs text-gray-500 mt-1">
-							Permite que participantes façam opt-in para receber informações
-						</p>
-					</div>
-
-					<!-- Upload de Imagem -->
-					<div class="md:col-span-2">
-						<label class="block text-sm font-medium text-gray-700 mb-2">
-							Imagem do Evento
+						<label for="file-upload" class="relative cursor-pointer">
+							<span class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Trocar Imagem</span>
+							<input id="file-upload" name="file-upload" type="file" class="sr-only" accept="image/*" on:change={handleImageChange} />
 						</label>
-						<div class="flex items-center space-x-4">
-							<div
-								class="w-32 h-32 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center overflow-hidden"
-							>
-								{#if imagePreview}
-									<img src={imagePreview} alt="Preview" class="w-full h-full object-cover" />
-								{:else}
-									<span class="text-gray-400 text-center text-sm p-2">
-										Nenhuma imagem selecionada
-									</span>
-								{/if}
-							</div>
-							<div>
-								<label>
-									<Button variant="outlined" class="mb-2">
-										{#snippet start()}
-											<Icon>upload</Icon>
-										{/snippet}
-										Selecionar Imagem
-									</Button>
-									<input
-										type="file"
-										accept="image/*"
-										on:change={handleImageChange}
-										class="hidden"
-									/>
-								</label>
-								<p class="text-xs text-gray-500">
-									Recomendado: 1200x630px, máximo 5MB
-								</p>
-							</div>
-						</div>
 					</div>
+					<p class="mt-2 text-xs text-gray-500 dark:text-gray-400">PNG, JPG, GIF até 5MB. Recomendado: 1200x630px.</p>
 				</div>
+			</div>
 
-				{#if errorMessage}
-					<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-						{errorMessage}
-					</div>
-				{/if}
-
-				{#if successMessage}
-					<div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-						{successMessage}
-					</div>
-				{/if}
-
-				{#if loading}
-					<LinearProgress indeterminate />
-				{/if}
-
-				<div class="flex justify-end space-x-4">
-					<Button href="/admin/dashboard" variant="outlined">Cancelar</Button>
-					<Button variant="filled" type="submit" disabled={loading}>
-						{loading ? 'Criando...' : 'Criar Evento'}
-					</Button>
+			<!-- Alertas -->
+			{#if errorMessage}
+				<div class="p-4 mt-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+					<span class="font-medium">Erro:</span> {errorMessage}
 				</div>
-			</form>
-	</Card>
+			{/if}
+			{#if successMessage}
+				<div class="p-4 mt-4 text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400" role="alert">
+					<span class="font-medium">Sucesso!</span> {successMessage}
+				</div>
+			{/if}
+
+			<!-- Ações -->
+			<div class="flex justify-end items-center space-x-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+				<a href="/admin/dashboard" class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700">Cancelar</a>
+				<button type="submit" class="inline-flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed" disabled={loading}>
+					{#if loading}
+						<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+							<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+							<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+						</svg>
+						Criando...
+					{:else}
+						Criar Evento
+					{/if}
+				</button>
+			</div>
+		</form>
+	</div>
 </div>

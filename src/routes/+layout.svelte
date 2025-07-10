@@ -1,8 +1,8 @@
 <script lang="ts">
 	import '../app.css';
-	import 'noph-ui/defaultTheme';
-	import { TopAppBar, IconButton } from 'noph-ui';
+	// Removed AppBar import - using custom header with Skeleton classes
 	import { page } from '$app/stores';
+	// @ts-ignore - O módulo virtual:pwa-info é gerado em tempo de execução
 	import { pwaInfo } from 'virtual:pwa-info';
 
 	let { children } = $props();
@@ -13,16 +13,22 @@
 	{@html webManifestLink}
 </svelte:head>
 
-<TopAppBar fixed>
-	<div slot="title">Hauxenda</div>
-	<div slot="actions">
-		<IconButton href="/eventos" aria-label="Ver Eventos" icon="event" />
-		{#if $page.url.pathname !== '/test-supabase'}
-			<IconButton href="/test-supabase" aria-label="Test Supabase" icon="bug_report" />
-		{/if}
-	</div>
-</TopAppBar>
-
-<main class="pt-16">
-	{@render children()}
-</main>
+<div class="app-shell">
+	<header class="bg-gray-100 border-b border-gray-300">
+		<div class="container mx-auto px-4">
+			<div class="flex items-center justify-between h-16">
+				<a href="/" class="flex items-center space-x-2">
+					<img src="/favicon.svg" alt="Logo" class="w-8 h-8" />
+					<span class="text-xl font-bold">Hauxenda</span>
+				</a>
+				<nav class="flex items-center space-x-4">
+					<a href="/eventos" class="btn btn-sm variant-ghost-surface">Eventos</a>
+					<a href="/admin" class="btn btn-sm variant-ghost-surface">Admin</a>
+				</nav>
+			</div>
+		</div>
+	</header>
+	<main class="container mx-auto p-4">
+		{@render children()}
+	</main>
+</div>

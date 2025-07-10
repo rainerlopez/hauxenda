@@ -7,7 +7,7 @@ export const load: PageLoad = async ({ params }) => {
 
 	// Buscar o evento pelo ID
 	const { data: event, error: eventError } = await supabase
-		.from('eventos')
+		.from('events')
 		.select('*')
 		.eq('id', id)
 		.single();

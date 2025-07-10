@@ -1,12 +1,23 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import Card, { Content, Actions } from '@smui/card';
-	import Button from '@smui/button';
-	import Dialog, { Title, Content as DialogContent, Actions as DialogActions } from '@smui/dialog';
-	import LinearProgress from '@smui/linear-progress';
-	import Textfield from '@smui/textfield';
-	import HelperText from '@smui/textfield/helper-text';
 	import { supabase } from '$lib/supabaseClient';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+	// Custom modal store implementation to avoid Skeleton UI CSS conflicts
+	import { writable } from 'svelte/store';
+	
+	type ModalSettings = {
+		type: string;
+		title?: string;
+		body: string;
+		response?: (r: boolean) => void;
+	};
+	
+	// Simple modal store replacement
+	const modalStore = writable(null);
+	const getModalStore = () => modalStore;
+
+	let optInDialogOpen = false;
 
 	export let data;
 	let event = data.event;
@@ -14,13 +25,13 @@
 	let name = '';
 	let email = '';
 	let phone = '';
+	let cpf = '';
 	let optIn = false;
-	let optInDialogOpen = false;
 	let loading = false;
 	let errorMessage = '';
 	let successMessage = '';
 
-	function formatDate(dateString) {
+	function formatDate(dateString: string | null): string {
 		if (!dateString) return '-';
 		const date = new Date(dateString);
 		return new Intl.DateTimeFormat('pt-BR', {
@@ -30,6 +41,16 @@
 			hour: '2-digit',
 			minute: '2-digit'
 		}).format(date);
+	}
+
+	function formatCurrency(value: number | null): string {
+		if (!value && value !== 0) return '-';
+		return value.toFixed(2).replace('.', ',');
+	}
+
+	// Função para abrir o modal de confirmação de presença
+	function openOptInModal() {
+		optInDialogOpen = true;
 	}
 
 	async function handleOptIn() {
@@ -44,24 +65,15 @@
 
 		try {
 			// 1. Registrar o participante
-			const { data: attendeeData, error: attendeeError } = await supabase
-				.from('attendees')
-				.insert({
-					name,
-					email,
-					phone: phone || null
-				})
-				.select()
-				.single();
-
-			if (attendeeError) throw attendeeError;
-
-			// 2. Registrar o opt-in para o evento
-			const { error: optInError } = await supabase.from('event_optins').insert({
-				event_id: event.id,
-				attendee_id: attendeeData.id,
-				opted_in: optIn
-			});
+			const { error: optInError } = await supabase
+				.from('inscricoes')
+				.insert({ 
+					evento_id: event.id, 
+					nome_participante: name, 
+					email_participante: email,
+					telefone_participante: phone,
+					cpf_participante: cpf
+				});
 
 			if (optInError) throw optInError;
 
@@ -73,14 +85,30 @@
 			phone = '';
 			optIn = false;
 			
-			// Fechar diálogo após alguns segundos
-			setTimeout(() => {
-				optInDialogOpen = false;
-			}, 3000);
+			// Mostrar mensagem de sucesso e fechar modal após alguns segundos
+			const successModal: ModalSettings = {
+				type: 'alert',
+				title: 'Sucesso!',
+				body: 'Inscrição realizada com sucesso!',
+				button: 'OK',
+				autoclose: true,
+				timeout: 3000
+			};
+			modalStore.trigger(successModal);
 			
 		} catch (err) {
 			console.error('Erro ao registrar participante:', err);
 			errorMessage = 'Ocorreu um erro ao registrar sua participação. Por favor, tente novamente.';
+			
+			// Mostrar mensagem de erro
+			const errorModal: ModalSettings = {
+				type: 'alert',
+				title: 'Erro',
+				body: errorMessage,
+				button: 'OK',
+				variant: 'error'
+			};
+			modalStore.trigger(errorModal);
 		} finally {
 			loading = false;
 		}
@@ -88,129 +116,126 @@
 </script>
 
 <svelte:head>
-	<title>{event.title} - Hauxenda</title>
-	<meta name="description" content={event.description || `Evento: ${event.title}`} />
-	{#if event.image_url}
-		<meta property="og:image" content={event.image_url} />
+	<title>{event.nome} - Hauxenda</title>
+	<meta name="description" content={`Evento: ${event.nome}`} />
+	{#if event.banner_url}
+		<meta property="og:image" content={event.banner_url} />
 	{/if}
 </svelte:head>
 
 <div class="container mx-auto px-4 py-8">
 	<div class="max-w-4xl mx-auto">
 		<!-- Cabeçalho do Evento -->
-		<div class="mb-8">
-			<h1 class="text-3xl md:text-4xl font-bold mb-2">{event.title}</h1>
-			<p class="text-gray-600">
-				{#if event.datetime}
-					<span class="inline-flex items-center mr-4">
-						<span class="material-icons text-gray-500 mr-1 text-sm">calendar_today</span>
-						{formatDate(event.datetime)}
-					</span>
-				{/if}
-				{#if event.location}
-					<span class="inline-flex items-center">
-						<span class="material-icons text-gray-500 mr-1 text-sm">location_on</span>
-						{event.location}
-					</span>
-				{/if}
-			</p>
+		<div class="card p-4">
+			<div class="p-4">
+				<div class="flex flex-col md:flex-row gap-6">
+					<div class="w-full md:w-1/2">
+						{#if event.banner_url}
+							<img src={event.banner_url} alt={event.nome} class="w-full h-auto rounded-lg shadow-md" />
+						{:else}
+							<div class="w-full h-64 bg-gray-200 rounded-lg flex items-center justify-center">
+								<span class="text-gray-500">Sem imagem</span>
+							</div>
+						{/if}
+					</div>
+					<div class="w-full md:w-1/2">
+						<h1 class="h2 font-bold mb-4">{event.nome}</h1>
+						<div class="mb-4">
+							<p class="text-gray-700">
+								<span class="font-semibold">Data:</span>
+								{formatDate(event.data_evento)}
+							</p>
+							<p class="text-gray-700">
+								<span class="font-semibold">Local:</span>
+								{event.local || 'A definir'}
+							</p>
+							<p class="text-gray-700">
+								<span class="font-semibold">Valor:</span>
+								R$ {formatCurrency(event.valor_inscricao)}
+							</p>
+						</div>
+						<div class="mb-4">
+							<h2 class="h3 font-semibold mb-2">Descrição</h2>
+							<p class="text-gray-700">{event.descricao || 'Informações sobre o evento'}</p>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 
-		<!-- Imagem do Evento -->
-		{#if event.image_url}
-			<div class="mb-8">
-				<img
-					src={event.image_url}
-					alt={event.title}
-					class="w-full h-auto max-h-96 object-cover rounded-lg shadow-lg"
-				/>
-			</div>
-		{/if}
-
 		<!-- Detalhes do Evento -->
-		<Card class="mb-8">
-			<Content class="p-6">
-				{#if event.description}
-					<div class="mb-6">
-						<h2 class="text-xl font-semibold mb-2">Sobre o Evento</h2>
-						<p class="text-gray-700 whitespace-pre-line">{event.description}</p>
-					</div>
-				{/if}
+		<div class="card p-4 mb-8">
+			<div class="p-6">
+				<h2 class="h3 font-semibold mb-4">Sobre o Evento</h2>
+				<p class="mb-6">{event.descricao || 'Detalhes e informações sobre o evento'}</p>
 
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 					<div>
-						<h2 class="text-xl font-semibold mb-3">Detalhes</h2>
+						<h3 class="text-xl font-semibold mb-3">Detalhes</h3>
 						<ul class="space-y-3">
-							{#if event.datetime}
+							{#if event.data_evento}
 								<li class="flex items-start">
-									<span class="material-icons text-gray-500 mr-2">calendar_today</span>
+									<span class="material-icons text-gray-500 mr-2">event</span>
 									<div>
-										<span class="text-sm text-gray-500">Data e Hora</span>
-										<p>{formatDate(event.datetime)}</p>
+										<span class="text-sm text-gray-600">Data e Hora</span>
+										<p>{formatDate(event.data_evento)}</p>
 									</div>
 								</li>
 							{/if}
-							{#if event.location}
+							{#if event.local}
 								<li class="flex items-start">
 									<span class="material-icons text-gray-500 mr-2">location_on</span>
 									<div>
-										<span class="text-sm text-gray-500">Local</span>
-										<p>{event.location}</p>
+										<span class="text-sm text-gray-600">Local</span>
+										<p>{event.local}</p>
 									</div>
 								</li>
 							{/if}
-							{#if event.guests}
-								<li class="flex items-start">
-									<span class="material-icons text-gray-500 mr-2">people</span>
-									<div>
-										<span class="text-sm text-gray-500">Convidados</span>
-										<p>{event.guests}</p>
-									</div>
-								</li>
-							{/if}
+							<li class="flex items-start">
+								<span class="material-icons text-gray-500 mr-2">people</span>
+								<div>
+									<span class="text-sm text-gray-600">Participantes</span>
+									<p>{event.max_participantes ? `Máximo ${event.max_participantes}` : 'Ilimitado'}</p>
+								</div>
+							</li>
 						</ul>
 					</div>
 
-					{#if event.link}
+					{#if event.pix_key}
 						<div>
-							<h2 class="text-xl font-semibold mb-3">Links</h2>
+							<h3 class="text-xl font-semibold mb-3">Pagamento</h3>
 							<ul class="space-y-3">
 								<li class="flex items-start">
-									<span class="material-icons text-gray-500 mr-2">link</span>
+									<span class="material-icons text-gray-500 mr-2">payment</span>
 									<div>
-										<span class="text-sm text-gray-500">Mais Informações</span>
-										<p>
-											<a
-												href={event.link}
-												target="_blank"
-												rel="noopener noreferrer"
-												class="text-blue-600 hover:underline break-all"
-											>
-												{event.link}
-											</a>
-										</p>
+										<span class="text-sm text-gray-500">Chave PIX</span>
+										<p class="font-mono text-sm bg-gray-100 p-2 rounded">{event.pix_key}</p>
 									</div>
 								</li>
 							</ul>
 						</div>
 					{/if}
 				</div>
-			</Content>
-			<Actions class="px-6 pb-6 pt-0">
-				<div class="w-full">
-					<Button variant="raised" on:click={() => (optInDialogOpen = true)} class="w-full md:w-auto">
-						<span class="material-icons mr-2">how_to_reg</span>
-						Confirmar Presença
-					</Button>
+
+				<div class="flex justify-between mt-6">
+					<div>
+						<button class="btn variant-filled" on:click={() => optInDialogOpen = true}>
+							<span class="material-icons mr-2">check_circle</span>
+							Confirmar Presença
+						</button>
+					</div>
+					<div>
+						<button class="btn variant-ghost" on:click={() => window.history.back()}>Voltar</button>
+					</div>
 				</div>
-			</Actions>
-		</Card>
+			</div>
+		</div>
 
 		<!-- Informações de Pagamento (se houver chave PIX) -->
 		{#if event.pix_key}
-			<Card class="mb-8">
-				<Content class="p-6">
-					<h2 class="text-xl font-semibold mb-3">Pagamento</h2>
+			<div class="card p-4 mb-8">
+				<div class="p-6">
+					<h2 class="h3 font-semibold mb-3">Pagamento</h2>
 					<div class="flex flex-col md:flex-row items-start md:items-center justify-between">
 						<div>
 							<p class="mb-2">
@@ -220,67 +245,85 @@
 								{event.pix_key}
 							</div>
 						</div>
-						<Button variant="outlined">
+						<button class="btn variant-outline">
 							<span class="material-icons mr-2">content_copy</span>
 							Copiar Chave PIX
-						</Button>
+						</button>
 					</div>
-				</Content>
-			</Card>
+				</div>
+			</div>
 		{/if}
 	</div>
 </div>
 
-<!-- Diálogo de Opt-in -->
-<Dialog bind:open={optInDialogOpen} aria-labelledby="optin-dialog-title">
-	<Title id="optin-dialog-title">Confirmar Presença</Title>
-	<DialogContent>
-		<form on:submit|preventDefault={handleOptIn} class="space-y-4">
-			<Textfield variant="outlined" bind:value={name} label="Nome Completo *" class="w-full">
-				<HelperText slot="helper">Digite seu nome completo</HelperText>
-			</Textfield>
-
-			<Textfield variant="outlined" bind:value={email} label="Email *" type="email" class="w-full">
-				<HelperText slot="helper">Digite seu email</HelperText>
-			</Textfield>
-
-			<Textfield variant="outlined" bind:value={phone} label="Telefone" class="w-full">
-				<HelperText slot="helper">Digite seu telefone (opcional)</HelperText>
-			</Textfield>
-
-			<div class="flex items-center">
-				<input
-					type="checkbox"
-					id="optin"
-					bind:checked={optIn}
-					class="mr-2 h-4 w-4 text-blue-600"
-				/>
-				<label for="optin" class="text-sm text-gray-700">
-					Desejo receber atualizações sobre este e outros eventos
+<!-- Modal de Opt-in usando Skeleton UI -->
+{#if optInDialogOpen}
+	<div class="modal-backdrop bg-black/50 fixed inset-0 z-40"></div>
+	<div class="modal card w-modal shadow-xl variant-filled-surface p-4 border-t-4 border-primary-500 max-w-lg mx-auto fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50">
+		<header class="modal-header">
+			<h3 class="h3">Confirmar Presença</h3>
+			<button class="btn-icon btn-icon-sm variant-ghost-surface" on:click={() => (optInDialogOpen = false)}>
+				<span class="material-icons">close</span>
+			</button>
+		</header>
+		<article class="p-4">
+			<form on:submit|preventDefault={handleOptIn} class="space-y-4">
+				<label class="label">
+					<span>Nome Completo *</span>
+					<input class="input" type="text" bind:value={name} placeholder="Digite seu nome completo" />
+					<span class="text-xs text-surface-600-300-token">Digite seu nome completo</span>
 				</label>
-			</div>
 
-			{#if errorMessage}
-				<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-					{errorMessage}
+				<label class="label">
+					<span>Email *</span>
+					<input class="input" type="email" bind:value={email} placeholder="Digite seu email" />
+					<span class="text-xs text-surface-600-300-token">Digite seu email</span>
+				</label>
+
+				<label class="label">
+					<span>Telefone</span>
+					<input class="input" type="tel" bind:value={phone} placeholder="Digite seu telefone (opcional)" />
+					<span class="text-xs text-surface-600-300-token">Digite seu telefone (opcional)</span>
+				</label>
+
+				<div class="flex items-center">
+					<input
+						type="checkbox"
+						id="optin"
+						bind:checked={optIn}
+						class="checkbox mr-2"
+					/>
+					<label for="optin" class="text-sm">
+						Desejo receber atualizações sobre este e outros eventos
+					</label>
 				</div>
-			{/if}
 
-			{#if successMessage}
-				<div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-					{successMessage}
-				</div>
-			{/if}
+				{#if errorMessage}
+					<div class="alert variant-filled-error">
+						{errorMessage}
+					</div>
+				{/if}
 
-			{#if loading}
-				<LinearProgress indeterminate />
-			{/if}
-		</form>
-	</DialogContent>
-	<DialogActions>
-		<Button on:click={() => (optInDialogOpen = false)} disabled={loading}>Cancelar</Button>
-		<Button on:click={handleOptIn} variant="raised" disabled={loading || !name || !email}>
-			Confirmar
-		</Button>
-	</DialogActions>
-</Dialog>
+				{#if successMessage}
+					<div class="alert variant-filled-success">
+						{successMessage}
+					</div>
+				{/if}
+
+				{#if loading}
+					<div class="progress-bar">
+						<div class="progress-bar-track">
+							<div class="progress-bar-fill-indeterminate"></div>
+						</div>
+					</div>
+				{/if}
+			</form>
+		</article>
+		<footer class="modal-footer flex justify-end space-x-2">
+			<button class="btn variant-ghost" on:click={() => (optInDialogOpen = false)} disabled={loading}>Cancelar</button>
+			<button class="btn variant-filled-primary" on:click={handleOptIn} disabled={loading || !name || !email}>
+				Confirmar
+			</button>
+		</footer>
+	</div>
+{/if}

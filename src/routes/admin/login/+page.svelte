@@ -2,11 +2,7 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
-	import Button from '@smui/button';
-	import Textfield from '@smui/textfield';
-	import HelperText from '@smui/textfield/helper-text';
-	import Card, { Content, Actions } from '@smui/card';
-	import LinearProgress from '@smui/linear-progress';
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
 
 	let email = '';
 	let password = '';
@@ -60,58 +56,61 @@
 	<title>Login Admin - Hauxenda</title>
 </svelte:head>
 
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
+<div class="flex items-center justify-center min-h-screen bg-surface-50-900-token">
 	<div class="w-full max-w-md p-4">
-		<Card class="w-full">
-			<Content class="p-6">
-				<h1 class="text-2xl font-bold text-center mb-6">🔐 Admin Login</h1>
+		<div class="card p-6">
+			<header class="text-center mb-6">
+				<h1 class="h2">🔐 Admin Login</h1>
+			</header>
 
-				<form on:submit|preventDefault={handleLogin} class="space-y-6">
-					<Textfield
-						variant="outlined"
-						bind:value={email}
-						label="Email"
-						type="email"
-						class="w-full"
-						input$autocomplete="email"
-					>
-						<HelperText slot="helper">Digite seu email de administrador</HelperText>
-					</Textfield>
+			<form on:submit|preventDefault={handleLogin} class="space-y-6">
+				<label class="label">
+					<span>Email</span>
+					<input 
+						class="input" 
+						type="email" 
+						placeholder="seu@email.com" 
+						bind:value={email} 
+						autocomplete="email" 
+						required
+					/>
+					<span class="text-sm opacity-70">Digite seu email de administrador</span>
+				</label>
 
-					<Textfield
-						variant="outlined"
-						bind:value={password}
-						label="Senha"
-						type="password"
-						class="w-full"
-						input$autocomplete="current-password"
-					>
-						<HelperText slot="helper">Digite sua senha</HelperText>
-					</Textfield>
+				<label class="label">
+					<span>Senha</span>
+					<input 
+						class="input" 
+						type="password" 
+						placeholder="********" 
+						bind:value={password} 
+						autocomplete="current-password" 
+						required
+					/>
+					<span class="text-sm opacity-70">Digite sua senha</span>
+				</label>
 
-					{#if errorMessage}
-						<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-							{errorMessage}
-						</div>
-					{/if}
-
-					{#if loading}
-						<LinearProgress indeterminate />
-					{/if}
-
-					<div class="flex justify-center">
-						<Button variant="raised" type="submit" disabled={loading} class="w-full">
-							{loading ? 'Entrando...' : 'Entrar'}
-						</Button>
+				{#if errorMessage}
+					<div class="alert variant-filled-error">
+						{errorMessage}
 					</div>
-				</form>
-			</Content>
-			<Actions class="px-6 pb-6 pt-0">
-				<div class="w-full flex justify-between items-center">
-					<Button href="/" variant="text">← Voltar</Button>
-					<Button href="/admin/register" variant="text">Registrar</Button>
+				{/if}
+
+				{#if loading}
+					<Progress/>
+				{/if}
+
+				<div class="flex justify-center">
+					<button type="submit" class="btn variant-filled-primary w-full" disabled={loading}>
+						{loading ? 'Entrando...' : 'Entrar'}
+					</button>
 				</div>
-			</Actions>
-		</Card>
+			</form>
+
+			<footer class="mt-6 flex justify-between items-center">
+				<a href="/" class="btn variant-ghost-surface">← Voltar</a>
+				<a href="/admin/register" class="btn variant-ghost-surface">Registrar</a>
+			</footer>
+		</div>
 	</div>
 </div>

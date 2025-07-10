@@ -1,11 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { supabase } from '$lib/supabaseClient';
-	import Button from '@smui/button';
-	import Textfield from '@smui/textfield';
-	import HelperText from '@smui/textfield/helper-text';
-	import Card, { Content, Actions } from '@smui/card';
-	import LinearProgress from '@smui/linear-progress';
+	import { Progress } from '@skeletonlabs/skeleton-svelte';
 
 	let name = '';
 	let email = '';
@@ -76,85 +72,92 @@
 	<title>Registrar Admin - Hauxenda</title>
 </svelte:head>
 
-<div class="flex items-center justify-center min-h-screen bg-gray-100">
+<div class="flex items-center justify-center min-h-screen bg-surface-50-900-token">
 	<div class="w-full max-w-md p-4">
-		<Card class="w-full">
-			<Content class="p-6">
-				<h1 class="text-2xl font-bold text-center mb-6">👤 Registrar Admin</h1>
+		<div class="card p-6">
+			<header class="text-center mb-6">
+				<h1 class="h2">👤 Registrar Admin</h1>
+			</header>
 
-				<form on:submit|preventDefault={handleRegister} class="space-y-4">
-					<Textfield
-						variant="outlined"
-						bind:value={name}
-						label="Nome Completo"
-						type="text"
-						class="w-full"
-						input$autocomplete="name"
-					>
-						<HelperText slot="helper">Digite seu nome completo</HelperText>
-					</Textfield>
+			<form on:submit|preventDefault={handleRegister} class="space-y-4">
+				<label class="label">
+					<span>Nome Completo</span>
+					<input 
+						class="input" 
+						type="text" 
+						placeholder="Seu nome completo" 
+						bind:value={name} 
+						autocomplete="name" 
+						required
+					/>
+					<span class="text-sm opacity-70">Digite seu nome completo</span>
+				</label>
 
-					<Textfield
-						variant="outlined"
-						bind:value={email}
-						label="Email"
-						type="email"
-						class="w-full"
-						input$autocomplete="email"
-					>
-						<HelperText slot="helper">Digite seu email</HelperText>
-					</Textfield>
+				<label class="label">
+					<span>Email</span>
+					<input 
+						class="input" 
+						type="email" 
+						placeholder="seu@email.com" 
+						bind:value={email} 
+						autocomplete="email" 
+						required
+					/>
+					<span class="text-sm opacity-70">Digite seu email</span>
+				</label>
 
-					<Textfield
-						variant="outlined"
-						bind:value={password}
-						label="Senha"
-						type="password"
-						class="w-full"
-						input$autocomplete="new-password"
-					>
-						<HelperText slot="helper">Mínimo de 6 caracteres</HelperText>
-					</Textfield>
+				<label class="label">
+					<span>Senha</span>
+					<input 
+						class="input" 
+						type="password" 
+						placeholder="********" 
+						bind:value={password} 
+						autocomplete="new-password" 
+						required
+					/>
+					<span class="text-sm opacity-70">Mínimo de 6 caracteres</span>
+				</label>
 
-					<Textfield
-						variant="outlined"
-						bind:value={confirmPassword}
-						label="Confirmar Senha"
-						type="password"
-						class="w-full"
-						input$autocomplete="new-password"
-					>
-						<HelperText slot="helper">Digite a senha novamente</HelperText>
-					</Textfield>
+				<label class="label">
+					<span>Confirmar Senha</span>
+					<input 
+						class="input" 
+						type="password" 
+						placeholder="********" 
+						bind:value={confirmPassword} 
+						autocomplete="new-password" 
+						required
+					/>
+					<span class="text-sm opacity-70">Digite a senha novamente</span>
+				</label>
 
-					{#if errorMessage}
-						<div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-							{errorMessage}
-						</div>
-					{/if}
-
-					{#if successMessage}
-						<div class="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded">
-							{successMessage}
-						</div>
-					{/if}
-
-					{#if loading}
-						<LinearProgress indeterminate />
-					{/if}
-
-					<div class="flex justify-center">
-						<Button variant="raised" type="submit" disabled={loading} class="w-full">
-							{loading ? 'Registrando...' : 'Registrar'}
-						</Button>
+				{#if errorMessage}
+					<div class="alert variant-filled-error">
+						{errorMessage}
 					</div>
-				</form>
-			</Content>
-			<Actions class="px-6 pb-6 pt-0">
-				<div class="w-full flex justify-center">
-					<Button href="/admin/login" variant="text">← Voltar para Login</Button>
+				{/if}
+
+				{#if successMessage}
+					<div class="alert variant-filled-success">
+						{successMessage}
+					</div>
+				{/if}
+
+				{#if loading}
+					<Progress/>
+				{/if}
+
+				<div class="flex justify-center">
+					<button type="submit" class="btn variant-filled-primary w-full" disabled={loading}>
+						{loading ? 'Registrando...' : 'Registrar'}
+					</button>
 				</div>
-			</Actions>
-		</Card>
+			</form>
+
+			<footer class="mt-6 flex justify-center">
+				<a href="/admin/login" class="btn variant-ghost-surface">← Voltar para Login</a>
+			</footer>
+		</div>
 	</div>
 </div>
