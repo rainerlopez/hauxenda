@@ -1,10 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  EditOutlined,
-  MoonOutlined,
-  SettingOutlined,
-  SunOutlined,
-} from "@ant-design/icons";
+import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { Card, Divider, Typography } from "antd";
 import ParticlesBg from "particles-bg";
 import "./HomePage.css";
