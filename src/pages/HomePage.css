@@ -55,3 +55,57 @@
   /* Ensure content is fully opaque */
   opacity: 1;
 }
+
+/* Image carousel container */
+.image-carousel {
+  position: relative;
+  width: 100%;
+  height: 40vh;
+  overflow: hidden;
+}
+
+/* Adiciona um overlay escuro sobre as imagens do carrossel */
+.image-carousel::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3); /* Overlay preto com 30% de opacidade */
+  z-index: 1; /* Garante que o overlay fique sobre as imagens */
+}
+
+/* Carousel image with transitions */
+.carousel-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 1.5s ease-in-out !important; /* Adicionado !important para garantir a aplicação */
+}
+
+/* Fade in animation */
+.carousel-image.fade-in {
+  opacity: 1 !important;
+}
+
+/* Fade out animation */
+.carousel-image.fade-out {
+  opacity: 0 !important;
+}
+
+/* Estilos para o Card principal */
+.home-card {
+  width: 600px;
+  max-width: 90%; /* Garante que não ultrapasse a tela em viewports muito estreitos */
+}
+
+/* Media Query para telas menores (ex: mobile) */
+@media (max-width: 768px) {
+  .home-card {
+    width: 70%;
+  }
+}
