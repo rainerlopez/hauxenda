@@ -4,33 +4,37 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), VitePWA({
-    registerType: 'autoUpdate',
-    injectRegister: false,
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: false,
 
-    pwaAssets: {
-      disabled: false,
-      config: true,
-    },
+      pwaAssets: {
+        disabled: false,
+        config: true,
+      },
 
-    manifest: {
-      name: 'Hauxenda',
-      short_name: 'Hxnda',
-      description: 'A simple PWA for managing Ceremonies and Atendees by Rainer E. Lopez (rainerdev@gmail.com)',
-      theme_color: '#d6fcc5',
-    },
+      manifest: {
+        name: "Hauxenda",
+        short_name: "Hxnda",
+        description:
+          "A simple PWA for managing Ceremonies and Atendees by Rainer E. Lopez (rainerdev@gmail.com)",
+        theme_color: "#305544",
+      },
 
-    workbox: {
-      globPatterns: ['**/*.{js,css,html,svg,png,ico}'],
-      cleanupOutdatedCaches: true,
-      clientsClaim: true,
-    },
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,svg,png,ico}"],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+      },
 
-    devOptions: {
-      enabled: false,
-      navigateFallback: 'index.html',
-      suppressWarnings: true,
-      type: 'module',
-    },
-  })],
-})
+      devOptions: {
+        enabled: false,
+        navigateFallback: "index.html",
+        suppressWarnings: true,
+        type: "module",
+      },
+    }),
+  ],
+});

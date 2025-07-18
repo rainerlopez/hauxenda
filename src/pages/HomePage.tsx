@@ -4,16 +4,17 @@ import { Card, Divider, Typography } from "antd";
 import ParticlesBg from "particles-bg";
 import "./HomePage.css";
 
+// Importando as imagens para que o Vite as inclua no build
+import imageUrl1 from "/src/assets/random/Captura de tela de 2025-07-18 14-10-05.png";
+import imageUrl2 from "/src/assets/random/Captura de tela de 2025-07-18 14-11-36.png";
+import imageUrl3 from "/src/assets/random/dim9a0q-e3c73afa-4508-4bcb-a278-50d52548596d.jpg";
+import imageUrl4 from "/src/assets/random/dmt2.jpg";
+
 const { Meta } = Card;
 
 const HomePage: React.FC = () => {
-  // Imagens da pasta random
-  const images = [
-    "/src/assets/random/Captura de tela de 2025-07-18 14-10-05.png",
-    "/src/assets/random/Captura de tela de 2025-07-18 14-11-36.png",
-    "/src/assets/random/dim9a0q-e3c73afa-4508-4bcb-a278-50d52548596d.jpg",
-    "/src/assets/random/dmt2.jpg",
-  ];
+  // Usando as imagens importadas
+  const images = [imageUrl1, imageUrl2, imageUrl3, imageUrl4];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nextImageIndex, setNextImageIndex] = useState(1);
