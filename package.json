@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^6.0.0",
+    "@supabase/supabase-js": "^2.52.0",
     "antd": "^5.26.5",
     "optional": "^0.1.4",
     "particles-bg": "^2.5.5",
