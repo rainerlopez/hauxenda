@@ -18,7 +18,7 @@ export function useSupabaseAuth() {
     }
 
     // Get initial session
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       const { session } = data;
       setSession(session);
       setUser(session?.user ?? null);
