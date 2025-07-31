@@ -53,8 +53,8 @@ const LoginPage: React.FC = () => {
       if (error) throw error;
       
       message.success('Login realizado com sucesso!');
-      // Redirecionar para a página inicial após login bem-sucedido
-      navigate('/');
+      // Redirecionar para o dashboard após login bem-sucedido
+      navigate('/dashboard');
     } catch (error: any) {
       message.error(error.message || 'Erro ao fazer login');
     } finally {
