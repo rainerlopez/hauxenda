@@ -7,8 +7,8 @@
   height: 100vh !important;
   margin: 0 !important;
   padding: 0 !important;
-  /* Background gradient similar to HomePage but without image */
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Background gradient using custom theme colors */
+  background: linear-gradient(0deg, #43cea2 0%, #185a9d 100%);
 }
 
 /* Content layer - positioned absolutely and centered */
