@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { MoonOutlined, SunOutlined } from "@ant-design/icons";
-import { Card, Divider, Typography, Button, Space } from "antd";
+import { Card, Divider, Typography } from "antd";
 import ParticlesBg from "particles-bg";
-import { ThemeToggle } from '../components/ThemeToggle';
-import { designTokens, colors } from '../theme';
 import "./HomePage.css";
 
 // Importando as imagens para que o Vite as inclua no build
@@ -13,7 +11,7 @@ import imageUrl2 from "/src/assets/random/Captura de tela de 2025-07-18 14-11-36
 import imageUrl3 from "/src/assets/random/dim9a0q-e3c73afa-4508-4bcb-a278-50d52548596d.jpg";
 import imageUrl4 from "/src/assets/random/dmt2.jpg";
 
-
+const { Meta } = Card;
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
@@ -87,213 +85,68 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div 
-      style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f0f9f0 0%, #dcf2dc 50%, #bce5bc 100%)',
-        position: 'relative',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: designTokens.spacing.lg,
-      }}
-    >
+    <div className="fullscreen-layout">
+      {/* Background layer with transparency */}
+      <div className="background-container"></div>
+
       {/* Particles layer - Custom advanced config */}
       <ParticlesBg type="custom" config={config} bg={false} />
 
-      {/* Theme Toggle - Posição fixa no canto superior direito */}
-      <div 
-        style={{
-          position: 'fixed',
-          top: designTokens.spacing.lg,
-          right: designTokens.spacing.lg,
-          zIndex: 1000,
-        }}
-      >
-        <ThemeToggle size="large" />
-      </div>
-
-      {/* Content layer */}
-      <Card
-        style={{
-          maxWidth: 500,
-          width: '100%',
-          borderRadius: designTokens.borderRadius.xl,
-          boxShadow: designTokens.shadows.xl,
-          backdropFilter: 'blur(15px)',
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          border: `1px solid ${colors.primary[200]}`,
-        }}
-        bodyStyle={{
-          padding: designTokens.spacing.xl,
-        }}
-        cover={
-          <div 
-            style={{
-              position: 'relative',
-              height: 300,
-              borderRadius: `${designTokens.borderRadius.xl}px ${designTokens.borderRadius.xl}px 0 0`,
-              overflow: 'hidden',
-            }}
-          >
-            {/* Próxima Imagem - Aparece apenas durante a transição */}
-            {isTransitioning && (
+      {/* Content layer without transparency */}
+      <div className="content-layer">
+        <Card
+          className="home-card"
+          cover={
+            <div className="image-carousel">
+              {/* Próxima Imagem - Aparece apenas durante a transição */}
+              {isTransitioning && (
+                <img
+                  key={`img-${nextImageIndex}`}
+                  alt="Hauxenda Gallery Next"
+                  src={images[nextImageIndex]}
+                  className="carousel-image crossfade-image fade-in"
+                />
+              )}
+              {/* Imagem Atual - Fica visível e some na transição */}
               <img
-                key={`img-${nextImageIndex}`}
-                alt="Hauxenda Gallery Next"
-                src={images[nextImageIndex]}
-                className="carousel-image crossfade-image fade-in"
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                }}
+                key={`img-${currentImageIndex}`}
+                alt="Hauxenda Gallery Current"
+                src={images[currentImageIndex]}
+                className={`carousel-image crossfade-image ${
+                  isTransitioning ? "fade-out" : "fade-in"
+                }`}
               />
-            )}
-            {/* Imagem Atual - Fica visível e some na transição */}
-            <img
-              key={`img-${currentImageIndex}`}
-              alt="Hauxenda Gallery Current"
-              src={images[currentImageIndex]}
-              className={`carousel-image crossfade-image ${
-                isTransitioning ? "fade-out" : "fade-in"
-              }`}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                position: 'absolute',
-                top: 0,
-                left: 0,
-              }}
-            />
-            
-            {/* Overlay com gradiente */}
+            </div>
+          }
+          actions={[
+            <div key="haux" style={{ textAlign: "center" }}>
+              <MoonOutlined />
+              <div>Haux</div>
+            </div>,
             <div 
-              style={{
-                position: 'absolute',
-                bottom: 0,
-                left: 0,
-                right: 0,
-                height: '50%',
-                background: 'linear-gradient(transparent, rgba(0,0,0,0.3))',
-                zIndex: 1,
-              }}
-            />
-          </div>
-        }
-      >
-        {/* Conteúdo principal */}
-        <div style={{ textAlign: 'center' }}>
-          <Typography.Title 
-            level={1} 
-            style={{ 
-              margin: 0,
-              marginBottom: designTokens.spacing.sm,
-              background: 'linear-gradient(135deg, #3d8b3d, #2d6b2d)',
-              WebkitBackgroundClip: 'text',
-              WebkitTextFillColor: 'transparent',
-              backgroundClip: 'text',
-              fontSize: 32,
-            }}
-          >
-            🌿 Bem-vindo ao Hauxenda
-          </Typography.Title>
-          
-          <Typography.Text 
-            type="secondary" 
-            style={{ 
-              fontSize: 16,
-              display: 'block',
-              marginBottom: designTokens.spacing.xl,
-              lineHeight: 1.6,
-            }}
-          >
-            Gerencie suas cerimônias e participantes de forma simples e elegante
-          </Typography.Text>
-
-          <Divider 
-            style={{ 
-              margin: `${designTokens.spacing.lg}px 0`,
-              borderColor: colors.primary[200],
-            }} 
+              key="condutor" 
+              style={{ textAlign: "center", cursor: 'pointer' }}
+              onClick={handleCondutorClick}
+            >
+              <SunOutlined />
+              <div>Condutor</div>
+            </div>,
+          ]}
+        >
+          <Meta
+            title="Bem-vindo ao Hauxenda"
+            description="Gerencie suas cerimônias e participantes de forma simples e elegante"
           />
 
-          <Typography.Title 
-            level={4} 
-            style={{ 
-              marginBottom: designTokens.spacing.lg,
-              color: colors.primary[600],
-            }}
-          >
-            Você é?
-          </Typography.Title>
+          <Divider style={{ margin: "24px 0 0" }} />
 
-          {/* Botões de ação */}
-          <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <Button
-              size="large"
-              icon={<MoonOutlined />}
-              style={{
-                height: 60,
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                fontWeight: 500,
-                borderColor: colors.accent.indigo,
-                color: colors.accent.indigo,
-              }}
-            >
-              <div>
-                <div>Participante</div>
-                <Typography.Text 
-                  style={{ 
-                    fontSize: 12,
-                    color: colors.neutral[500],
-                    display: 'block',
-                  }}
-                >
-                  Buscar eventos e cerimônias
-                </Typography.Text>
-              </div>
-            </Button>
-            
-            <Button
-              type="primary"
-              size="large"
-              icon={<SunOutlined />}
-              onClick={handleCondutorClick}
-              style={{
-                height: 60,
-                width: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: 16,
-                fontWeight: 600,
-              }}
-            >
-              <div>
-                <div>Condutor</div>
-                <Typography.Text 
-                  style={{ 
-                    fontSize: 12,
-                    color: 'rgba(255, 255, 255, 0.8)',
-                    display: 'block',
-                  }}
-                >
-                  Gerenciar eventos e participantes
-                </Typography.Text>
-              </div>
-            </Button>
-          </Space>
-        </div>
-      </Card>
+          <div style={{ textAlign: "center", marginTop: "-8px" }}>
+            <Typography.Title level={5} style={{ marginBottom: 0 }}>
+              Você É?
+            </Typography.Title>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
