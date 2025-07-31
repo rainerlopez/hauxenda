@@ -1,0 +1,189 @@
+/* Estilos globais do tema Hauxenda */
+
+:root {
+  --hauxenda-primary: #43cea2;
+  --hauxenda-secondary: #185a9d;
+  --hauxenda-primary-light: #5dd4b0;
+  --hauxenda-primary-dark: #3bb896;
+  --hauxenda-secondary-light: #2d6bb0;
+  --hauxenda-secondary-dark: #14528a;
+}
+
+/* Tema claro */
+.light-theme {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text-primary: #262626;
+  --text-secondary: #595959;
+  --border-color: #d9d9d9;
+}
+
+/* Tema escuro */
+.dark-theme {
+  --bg-primary: #1f1f1f;
+  --bg-secondary: #141414;
+  --text-primary: #ffffff;
+  --text-secondary: #a6a6a6;
+  --border-color: #434343;
+}
+
+/* Aplicar cores customizadas nos componentes Ant Design */
+.ant-btn-primary {
+  background-color: var(--hauxenda-primary) !important;
+  border-color: var(--hauxenda-primary) !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: var(--hauxenda-primary-light) !important;
+  border-color: var(--hauxenda-primary-light) !important;
+}
+
+.ant-btn-primary:active {
+  background-color: var(--hauxenda-primary-dark) !important;
+  border-color: var(--hauxenda-primary-dark) !important;
+}
+
+/* Links e elementos de destaque */
+.ant-typography a,
+.ant-anchor-link-title {
+  color: var(--hauxenda-secondary) !important;
+}
+
+.ant-typography a:hover,
+.ant-anchor-link-title:hover {
+  color: var(--hauxenda-secondary-light) !important;
+}
+
+/* Inputs com foco */
+.ant-input:focus,
+.ant-input-focused,
+.ant-select-focused .ant-select-selector {
+  border-color: var(--hauxenda-primary) !important;
+  box-shadow: 0 0 0 2px rgba(67, 206, 162, 0.2) !important;
+}
+
+/* Tabs ativas */
+.ant-tabs-tab-active .ant-tabs-tab-btn {
+  color: var(--hauxenda-primary) !important;
+}
+
+.ant-tabs-ink-bar {
+  background-color: var(--hauxenda-primary) !important;
+}
+
+/* Menu items ativos */
+.ant-menu-item-selected {
+  background-color: rgba(67, 206, 162, 0.1) !important;
+  color: var(--hauxenda-primary) !important;
+}
+
+.ant-menu-item-selected::after {
+  border-right-color: var(--hauxenda-primary) !important;
+}
+
+/* Progress bars */
+.ant-progress-bg {
+  background-color: var(--hauxenda-primary) !important;
+}
+
+/* Switches */
+.ant-switch-checked {
+  background-color: var(--hauxenda-primary) !important;
+}
+
+/* Radio buttons e checkboxes */
+.ant-radio-checked .ant-radio-inner {
+  border-color: var(--hauxenda-primary) !important;
+  background-color: var(--hauxenda-primary) !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: var(--hauxenda-primary) !important;
+  border-color: var(--hauxenda-primary) !important;
+}
+
+/* Steps */
+.ant-steps-item-finish .ant-steps-item-icon {
+  background-color: var(--hauxenda-primary) !important;
+  border-color: var(--hauxenda-primary) !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+  background-color: var(--hauxenda-primary) !important;
+  border-color: var(--hauxenda-primary) !important;
+}
+
+/* Badges e Tags */
+.ant-badge-status-processing {
+  background-color: var(--hauxenda-primary) !important;
+}
+
+.ant-tag.ant-tag-blue {
+  background-color: rgba(24, 90, 157, 0.1) !important;
+  border-color: var(--hauxenda-secondary) !important;
+  color: var(--hauxenda-secondary) !important;
+}
+
+.ant-tag.ant-tag-green {
+  background-color: rgba(67, 206, 162, 0.1) !important;
+  border-color: var(--hauxenda-primary) !important;
+  color: var(--hauxenda-primary) !important;
+}
+
+/* Spin loading */
+.ant-spin-dot-item {
+  background-color: var(--hauxenda-primary) !important;
+}
+
+/* Slider */
+.ant-slider-track {
+  background-color: var(--hauxenda-primary) !important;
+}
+
+.ant-slider-handle {
+  border-color: var(--hauxenda-primary) !important;
+}
+
+.ant-slider-handle:hover {
+  border-color: var(--hauxenda-primary-light) !important;
+}
+
+/* Rate (estrelas) */
+.ant-rate-star-full .ant-rate-star-first,
+.ant-rate-star-full .ant-rate-star-second {
+  color: var(--hauxenda-primary) !important;
+}
+
+/* Transições suaves */
+.ant-btn,
+.ant-input,
+.ant-select-selector,
+.ant-card,
+.ant-modal-content {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Customizações específicas do projeto */
+.hauxenda-header {
+  background: linear-gradient(135deg, var(--hauxenda-primary), var(--hauxenda-secondary));
+  color: white;
+}
+
+.hauxenda-card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.hauxenda-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
+}
+
+.hauxenda-gradient-text {
+  background: linear-gradient(135deg, var(--hauxenda-primary), var(--hauxenda-secondary));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}

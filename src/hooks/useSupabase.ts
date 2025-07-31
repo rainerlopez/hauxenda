@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 // Hook for authentication state management
 export function useSupabaseAuth() {
@@ -9,16 +9,29 @@ export function useSupabaseAuth() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // If Supabase is not configured (development mode), set mock state
+    if (!isSupabaseConfigured) {
+      setSession(null);
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data }) => {
+      const { session } = data;
       setSession(session);
       setUser(session?.user ?? null);
+      setLoading(false);
+    }).catch(() => {
+      setSession(null);
+      setUser(null);
       setLoading(false);
     });
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (_event: string, session: Session | null) => {
         setSession(session);
         setUser(session?.user ?? null);
         setLoading(false);
@@ -40,6 +53,15 @@ export function useEvents() {
   const fetchEvents = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return empty array
+      if (!isSupabaseConfigured) {
+        setEvents([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
+      
       const { data, error } = await supabase
         .from('events')
         .select('*')
@@ -126,6 +148,14 @@ export function useAttendees() {
   const fetchAttendees = async () => {
     try {
       setLoading(true);
+      
+      // If Supabase is not configured, return empty array
+      if (!isSupabaseConfigured) {
+        setAttendees([]);
+        setError(null);
+        setLoading(false);
+        return;
+      }
       const { data, error } = await supabase
         .from('attendees')
         .select('*')
