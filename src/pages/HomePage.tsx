@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MoonOutlined, SunOutlined } from "@ant-design/icons";
 import { Card, Divider, Typography } from "antd";
 import ParticlesBg from "particles-bg";
@@ -13,12 +14,18 @@ import imageUrl4 from "/src/assets/random/dmt2.jpg";
 const { Meta } = Card;
 
 const HomePage: React.FC = () => {
+  const navigate = useNavigate();
+  
   // Usando as imagens importadas
   const images = [imageUrl1, imageUrl2, imageUrl3, imageUrl4];
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [nextImageIndex, setNextImageIndex] = useState(1);
   const [isTransitioning, setIsTransitioning] = useState(false);
+
+  const handleCondutorClick = () => {
+    navigate('/condutor');
+  };
 
   useEffect(() => {
     const imageChangeInterval = 4000; // Tempo total para trocar a imagem
@@ -116,7 +123,11 @@ const HomePage: React.FC = () => {
               <MoonOutlined />
               <div>Haux</div>
             </div>,
-            <div key="condutor" style={{ textAlign: "center" }}>
+            <div 
+              key="condutor" 
+              style={{ textAlign: "center", cursor: 'pointer' }}
+              onClick={handleCondutorClick}
+            >
               <SunOutlined />
               <div>Condutor</div>
             </div>,

@@ -2,6 +2,7 @@ import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import HomePage from './pages/HomePage';
 import { SupabaseExample } from './components/SupabaseExample';
+import LoginPage from './pages/LoginPage';
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Route path="/" element={<HomePage />} />
       <Route path="/testebg" element={<HomePage />} />
       <Route path="/supabase" element={<SupabaseExample />} />
+      <Route path="/condutor" element={<LoginPage />} />
     </Routes>
   );
 }

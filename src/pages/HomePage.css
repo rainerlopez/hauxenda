@@ -106,6 +106,6 @@
 /* Media Query para telas menores (ex: mobile) */
 @media (max-width: 768px) {
   .home-card {
-    width: 70%;
+    width: 85%;
   }
 }
