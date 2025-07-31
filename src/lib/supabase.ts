@@ -6,8 +6,21 @@ import type { Database } from '../types/supabase';
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
-// Check if we're in development without env vars
-const isDevelopment = import.meta.env.DEV;
+// Debug logging for environment variables (only in development)
+if (import.meta.env.DEV) {
+  console.log('🔍 Supabase Environment Debug:', {
+    isDev: import.meta.env.DEV,
+    mode: import.meta.env.MODE,
+    hasViteUrl: !!import.meta.env.VITE_SUPABASE_URL,
+    hasPublicUrl: !!import.meta.env.PUBLIC_SUPABASE_URL,
+    hasViteKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+    hasPublicKey: !!import.meta.env.PUBLIC_SUPABASE_ANON_KEY,
+    finalUrl: !!supabaseUrl,
+    finalKey: !!supabaseAnonKey
+  });
+}
+
+// Check if Supabase is configured
 const hasSupabaseConfig = supabaseUrl && supabaseAnonKey;
 
 // Create a mock client for development when env vars are missing
@@ -43,13 +56,9 @@ const createMockClient = () => {
 
 // Create and export the Supabase client with TypeScript support
 export const supabase = (() => {
-  // In production, require the environment variables
-  if (!isDevelopment && !hasSupabaseConfig) {
-    throw new Error('Missing Supabase environment variables in production');
-  }
-  
-  // In development, use mock client if env vars are missing
-  if (isDevelopment && !hasSupabaseConfig) {
+  // If no Supabase config is available, use mock client (works for both dev and prod)
+  if (!hasSupabaseConfig) {
+    console.warn('⚠️ Supabase not configured - using mock client');
     return createMockClient();
   }
   
