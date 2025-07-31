@@ -1,8 +1,11 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Card } from 'antd';
-import { LogoutOutlined } from '@ant-design/icons';
+import { Button, Card, Typography } from 'antd';
+import { LogoutOutlined, PlusOutlined, CalendarOutlined, UserOutlined } from '@ant-design/icons';
 import { supabase } from '../lib/supabase';
+import './DashboardPage.css';
+
+const { Title, Text } = Typography;
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
@@ -17,41 +20,79 @@ const DashboardPage: React.FC = () => {
     }
   };
 
+  const handleCreateEvent = () => {
+    // TODO: Navigate to create event page
+    console.log('Criar novo evento');
+  };
+
+  const handleManageEvents = () => {
+    // TODO: Navigate to manage events page
+    console.log('Gerenciar eventos');
+  };
+
+  const handleViewParticipants = () => {
+    // TODO: Navigate to participants page
+    console.log('Visualizar participantes');
+  };
+
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px',
-      background: '#f0f2f5'
-    }}>
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: 600,
-          textAlign: 'center'
-        }}
-        actions={[
-          <Button 
-            key="logout"
-            type="text" 
-            danger 
-            icon={<LogoutOutlined />}
-            onClick={handleLogout}
-          >
-            Sair
-          </Button>
-        ]}
-      >
-        <h1 style={{ 
-          fontSize: '24px',
-          margin: '0 0 20px 0'
-        }}>
-          Dashboard
-        </h1>
-      </Card>
+    <div className="dashboard-layout">
+      <div className="dashboard-content">
+        <Card
+          className="dashboard-card"
+          actions={[
+            <Button 
+              key="logout"
+              type="text" 
+              className="logout-btn"
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+            >
+              Sair
+            </Button>
+          ]}
+        >
+          <Title className="dashboard-title">
+            Dashboard Administrativo
+          </Title>
+          
+          <Text className="dashboard-subtitle">
+            Gerencie seus eventos e participantes
+          </Text>
+          
+          <div className="dashboard-actions">
+            <Button 
+              type="primary" 
+              size="large"
+              icon={<PlusOutlined />}
+              className="dashboard-action-btn"
+              onClick={handleCreateEvent}
+            >
+              Criar Novo Evento
+            </Button>
+            
+            <Button 
+              type="default" 
+              size="large"
+              icon={<CalendarOutlined />}
+              className="dashboard-action-btn"
+              onClick={handleManageEvents}
+            >
+              Gerenciar Eventos
+            </Button>
+            
+            <Button 
+              type="default" 
+              size="large"
+              icon={<UserOutlined />}
+              className="dashboard-action-btn"
+              onClick={handleViewParticipants}
+            >
+              Visualizar Participantes
+            </Button>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };
