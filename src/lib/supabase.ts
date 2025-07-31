@@ -2,8 +2,9 @@ import { createClient } from '@supabase/supabase-js';
 import type { Database } from '../types/supabase';
 
 // Environment variables for Supabase configuration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Support both VITE_ (development) and PUBLIC_ (production) prefixes
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || import.meta.env.PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
 // Check if we're in development without env vars
 const isDevelopment = import.meta.env.DEV;
