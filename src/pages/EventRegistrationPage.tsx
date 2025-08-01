@@ -8,8 +8,7 @@ import {
   message,
   Modal,
   Space,
-  Divider,
-  Image
+  Divider
 } from "antd";
 import { 
   HomeOutlined, 
@@ -257,16 +256,12 @@ const EventRegistrationPage: React.FC = () => {
     <div className="event-registration-layout">
       <div className="event-registration-content">
         <Card className="event-registration-card">
-          {event?.image_url && (
-            <div className="event-image-container">
-              <Image
-                src={event.image_url || defaultImage}
-                alt={event.name}
-                preview={false}
-                className="event-image"
-              />
-            </div>
-          )}
+          <div 
+            className="event-image-container"
+            style={{
+              backgroundImage: `url(${event?.image_url || defaultImage})`,
+            }}
+          />
           <div className="event-registration-header">
             <Title className="event-registration-title">
               Inscrição Cerimônia {event?.name}
