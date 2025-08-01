@@ -8,7 +8,8 @@ import {
   message,
   Modal,
   Space,
-  Divider
+  Divider,
+  Image
 } from "antd";
 import { 
   HomeOutlined, 
@@ -249,10 +250,23 @@ const EventRegistrationPage: React.FC = () => {
     );
   }
 
+  // Default image if none is provided
+  const defaultImage = 'https://images.unsplash.com/photo-1505373876331-7d4ec9d6f1f7?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
+
   return (
     <div className="event-registration-layout">
       <div className="event-registration-content">
         <Card className="event-registration-card">
+          {event?.image_url && (
+            <div className="event-image-container">
+              <Image
+                src={event.image_url || defaultImage}
+                alt={event.name}
+                preview={false}
+                className="event-image"
+              />
+            </div>
+          )}
           <div className="event-registration-header">
             <Title className="event-registration-title">
               Inscrição Cerimônia {event?.name}
