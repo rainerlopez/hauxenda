@@ -33,7 +33,7 @@ CREATE TABLE public.events (
     id uuid NOT NULL DEFAULT gen_random_uuid (),
     name text NOT NULL,
     location text,
-    guests text,
+guests jsonb,
     datetime timestamp
     with
         time zone,

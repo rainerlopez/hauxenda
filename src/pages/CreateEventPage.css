@@ -1,0 +1,204 @@
+/* Main container covering full viewport */
+.create-event-layout {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* Background gradient using custom theme colors */
+  background: linear-gradient(0deg, #43cea2 0%, #185a9d 100%);
+  overflow-y: auto;
+}
+
+/* Content layer - positioned absolutely and centered */
+.create-event-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  /* Ensure content is fully opaque */
+  opacity: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Create event card styling */
+.create-event-card {
+  width: 800px;
+  max-width: 95%; /* Garante que não ultrapasse a tela em viewports muito estreitos */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  margin: 20px 0;
+}
+
+/* Header section */
+.create-event-header {
+  text-align: center;
+  margin-bottom: 0;
+}
+
+/* Back button styling */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #666;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  color: #1890ff;
+}
+
+/* Create event title styling */
+.create-event-title {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  margin: 0 0 10px 0 !important;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+/* Create event subtitle styling */
+.create-event-subtitle {
+  font-size: 16px !important;
+  color: #666;
+  text-align: center;
+  display: block;
+  margin-bottom: 0;
+}
+
+/* Form styling */
+.create-event-form {
+  margin-top: 20px;
+}
+
+.create-event-form .ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.create-event-form .ant-input,
+.create-event-form .ant-input-number,
+.create-event-form .ant-picker,
+.create-event-form .ant-select-selector {
+  border-radius: 8px;
+}
+
+.create-event-form .ant-input:focus,
+.create-event-form .ant-input-focused,
+.create-event-form .ant-picker:focus,
+.create-event-form .ant-picker-focused,
+.create-event-form .ant-select-focused .ant-select-selector {
+  border-color: #43cea2;
+  box-shadow: 0 0 0 2px rgba(67, 206, 162, 0.2);
+}
+
+/* Upload area styling */
+.create-event-form .ant-upload-select-picture-card {
+  border-radius: 8px;
+  border-color: #d9d9d9;
+}
+
+.create-event-form .ant-upload-select-picture-card:hover {
+  border-color: #43cea2;
+}
+
+/* Guest list styling */
+.create-event-form .ant-space {
+  width: 100%;
+}
+
+.create-event-form .ant-space-item:first-child {
+  flex: 1;
+}
+
+/* Actions section */
+.create-event-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 600;
+  border-color: #d9d9d9;
+  color: #666;
+}
+
+.cancel-btn:hover {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+.save-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+  border: none;
+}
+
+.save-btn:hover {
+  background: linear-gradient(135deg, #3bb896 0%, #164d84 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(67, 206, 162, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .create-event-card {
+    width: 100%;
+    max-width: 95%;
+    margin: 10px 0;
+  }
+  
+  .create-event-title {
+    font-size: 24px !important;
+  }
+  
+  .create-event-subtitle {
+    font-size: 14px !important;
+  }
+  
+  .create-event-actions {
+    flex-direction: column;
+  }
+  
+  .back-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .create-event-content {
+    padding: 10px;
+  }
+  
+  .create-event-card {
+    max-width: 100%;
+  }
+  
+  .create-event-title {
+    font-size: 20px !important;
+  }
+}

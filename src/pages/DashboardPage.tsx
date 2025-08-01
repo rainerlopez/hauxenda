@@ -21,8 +21,7 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleCreateEvent = () => {
-    // TODO: Navigate to create event page
-    console.log('Criar novo evento');
+    navigate('/create-event');
   };
 
   const handleManageEvents = () => {
