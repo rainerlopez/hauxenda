@@ -179,6 +179,14 @@
   
   .create-event-actions {
     flex-direction: column;
+    gap: 12px;
+  }
+  
+  .cancel-btn,
+  .save-btn {
+    height: 52px !important;
+    min-height: 52px;
+    font-size: 16px;
   }
   
   .back-btn {
@@ -186,6 +194,8 @@
     top: auto;
     left: auto;
     margin-bottom: 10px;
+    height: 44px;
+    min-height: 44px;
   }
 }
 
@@ -200,5 +210,24 @@
   
   .create-event-title {
     font-size: 20px !important;
+  }
+  
+  .cancel-btn,
+  .save-btn {
+    height: 56px !important;
+    min-height: 56px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .back-btn {
+    height: 48px;
+    min-height: 48px;
+    font-size: 16px;
+  }
+  
+  .create-event-actions {
+    gap: 16px;
+    margin-top: 24px;
   }
 }
