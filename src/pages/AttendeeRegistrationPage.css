@@ -1,0 +1,209 @@
+/* Main container covering full viewport */
+.attendee-registration-layout {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  /* Background gradient using custom theme colors */
+  background: linear-gradient(0deg, #43cea2 0%, #185a9d 100%);
+  overflow-y: auto;
+}
+
+/* Content layer - positioned absolutely and centered */
+.attendee-registration-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  /* Ensure content is fully opaque */
+  opacity: 1;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+/* Attendee registration card styling */
+.attendee-registration-card {
+  width: 600px;
+  max-width: 95%; /* Garante que não ultrapasse a tela em viewports muito estreitos */
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  margin: 20px 0;
+}
+
+/* Header section */
+.attendee-registration-header {
+  text-align: center;
+  margin-bottom: 0;
+  position: relative;
+}
+
+/* Back button styling */
+.back-btn {
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: #666;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  color: #1890ff;
+}
+
+/* Attendee registration title styling */
+.attendee-registration-title {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  margin: 0 0 10px 0 !important;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+/* Attendee registration subtitle styling */
+.attendee-registration-subtitle {
+  font-size: 16px !important;
+  color: #666;
+  text-align: center;
+  display: block;
+  margin-bottom: 0;
+}
+
+/* Form styling */
+.attendee-registration-form {
+  margin-top: 20px;
+}
+
+.attendee-registration-form .ant-form-item-label > label {
+  font-weight: 600;
+  color: #333;
+  font-size: 16px;
+}
+
+.attendee-registration-form .ant-input {
+  border-radius: 8px;
+}
+
+.attendee-registration-form .ant-input:focus,
+.attendee-registration-form .ant-input-focused {
+  border-color: #43cea2;
+  box-shadow: 0 0 0 2px rgba(67, 206, 162, 0.2);
+}
+
+/* Actions section */
+.attendee-registration-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.cancel-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 600;
+  border-color: #d9d9d9;
+  color: #666;
+}
+
+.cancel-btn:hover {
+  border-color: #ff4d4f;
+  color: #ff4d4f;
+}
+
+.save-btn {
+  flex: 1;
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #43cea2 0%, #185a9d 100%);
+  border: none;
+}
+
+.save-btn:hover {
+  background: linear-gradient(135deg, #3bb896 0%, #164d84 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(67, 206, 162, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .attendee-registration-card {
+    width: 100%;
+    max-width: 95%;
+    margin: 10px 0;
+  }
+  
+  .attendee-registration-title {
+    font-size: 24px !important;
+  }
+  
+  .attendee-registration-subtitle {
+    font-size: 14px !important;
+  }
+  
+  .attendee-registration-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .cancel-btn,
+  .save-btn {
+    height: 52px !important;
+    min-height: 52px;
+    font-size: 16px;
+  }
+  
+  .back-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 10px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 480px) {
+  .attendee-registration-content {
+    padding: 10px;
+  }
+  
+  .attendee-registration-card {
+    max-width: 100%;
+  }
+  
+  .attendee-registration-title {
+    font-size: 20px !important;
+  }
+  
+  .cancel-btn,
+  .save-btn {
+    height: 56px !important;
+    min-height: 56px;
+    font-size: 18px;
+    font-weight: 600;
+  }
+  
+  .back-btn {
+    height: 48px;
+    min-height: 48px;
+    font-size: 16px;
+  }
+  
+  .attendee-registration-actions {
+    gap: 16px;
+    margin-top: 24px;
+  }
+}
