@@ -98,10 +98,25 @@
 .event-list-table .ant-table-thead > tr > th {
   font-weight: 600;
   background: #fafafa;
+  white-space: nowrap;
+}
+
+.event-list-table .ant-table-cell {
+  padding: 12px 8px !important;
 }
 
 .event-list-table .ant-btn-link {
   padding: 4px 8px;
+}
+
+/* Ensure table container doesn't overflow */
+.event-list-card .ant-card-body {
+  overflow-x: auto;
+  padding: 24px 16px;
+}
+
+.event-list-table .ant-table {
+  min-width: 600px;
 }
 
 /* Responsive design */

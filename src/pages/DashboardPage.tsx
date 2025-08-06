@@ -64,7 +64,7 @@ const DashboardPage: React.FC = () => {
               className="dashboard-action-btn"
               onClick={handleCreateEvent}
             >
-              Criar Novo Evento
+              Criar Nova Cerimônia
             </Button>
 
             <Button
