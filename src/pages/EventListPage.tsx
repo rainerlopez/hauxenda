@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, Space, Button, Typography, Card, message, Popconfirm } from 'antd';
-import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { supabase } from '../lib/supabase';
 import type { Event } from '../types/supabase';
 import './EventListPage.css';
@@ -116,20 +116,35 @@ const EventListPage: React.FC = () => {
 
   return (
     <div className="event-list-layout">
-      <Card className="event-list-card">
-        <Title level={2}>Gerenciar Cerimônias</Title>
-        <Table
-          columns={columns}
-          dataSource={events}
-          rowKey="id"
-          loading={loading}
-          pagination={{
-            pageSize: 10,
-            showSizeChanger: true,
-            showTotal: (total) => `Total de ${total} cerimônias`,
-          }}
-        />
-      </Card>
+      <div className="event-list-content">
+        <Button
+          type="link"
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate('/dashboard')}
+          className="back-btn"
+        >
+          Voltar
+        </Button>
+
+        <Card className="event-list-card">
+          <div className="event-list-header">
+            <Title level={2} className="event-list-title">Gerenciar Cerimônias</Title>
+          </div>
+          
+          <Table
+            className="event-list-table"
+            columns={columns}
+            dataSource={events}
+            rowKey="id"
+            loading={loading}
+            pagination={{
+              pageSize: 10,
+              showSizeChanger: true,
+              showTotal: (total) => `Total de ${total} cerimônias`,
+            }}
+          />
+        </Card>
+      </div>
     </div>
   );
 };

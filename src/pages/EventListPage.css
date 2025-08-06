@@ -1,40 +1,124 @@
+/* Main container covering full viewport */
 .event-list-layout {
-  min-height: 100vh;
-  padding: 24px;
-  background: linear-gradient(135deg, #f0f2f5 0%, #e6e9ec 100%);
-  display: flex;
-  justify-content: center;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: linear-gradient(0deg, #43cea2 0%, #185a9d 100%);
+  overflow-y: auto;
 }
 
-.event-list-card {
+/* Content layer - positioned absolutely and centered */
+.event-list-content {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  max-width: 1200px;
-  margin-top: 24px;
-  border-radius: 8px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03),
-              0 2px 4px rgba(0, 0, 0, 0.03),
-              0 4px 8px rgba(0, 0, 0, 0.03);
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+  opacity: 1;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
-.event-list-card .ant-card-body {
-  padding: 24px;
+/* Event list card styling */
+.event-list-card {
+  width: 1200px;
+  max-width: 95%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
+  margin: 20px 0;
 }
 
-.event-list-card .ant-typography {
-  margin-bottom: 24px;
-  color: #1f1f1f;
+/* Header section */
+.event-list-header {
+  text-align: center;
+  margin-bottom: 0;
 }
 
+/* Back button styling */
+.back-btn {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  color: #666;
+  font-weight: 500;
+}
+
+.back-btn:hover {
+  color: #1890ff;
+}
+
+/* Event list title styling */
+.event-list-title {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  margin: 0 0 24px 0 !important;
+  color: #1a1a1a;
+  text-align: center;
+}
+
+/* Table styling */
+.event-list-table {
+  margin-top: 16px;
+}
+
+.event-list-table .ant-table-thead > tr > th {
+  font-weight: 600;
+  background: #fafafa;
+}
+
+.event-list-table .ant-btn-link {
+  padding: 4px 8px;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .event-list-layout {
-    padding: 16px;
-  }
-
   .event-list-card {
-    margin-top: 16px;
+    width: 100%;
+    max-width: 95%;
+    margin: 10px 0;
   }
+  
+  .event-list-title {
+    font-size: 24px !important;
+  }
+  
+  .back-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    margin-bottom: 10px;
+    height: 44px;
+    min-height: 44px;
+  }
+}
 
-  .event-list-card .ant-card-body {
-    padding: 16px;
+@media (max-width: 480px) {
+  .event-list-content {
+    padding: 10px;
+  }
+  
+  .event-list-card {
+    max-width: 100%;
+  }
+  
+  .event-list-title {
+    font-size: 20px !important;
+  }
+  
+  .back-btn {
+    height: 48px;
+    min-height: 48px;
+    font-size: 16px;
   }
 }
