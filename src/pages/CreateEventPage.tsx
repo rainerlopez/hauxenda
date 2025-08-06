@@ -225,7 +225,7 @@ const CreateEventPage: React.FC = () => {
               name="value1"
               rules={[{ required: true, message: 'Por favor, insira o valor 1' }]}
             >
-              <InputNumber
+              <InputNumber<number>
                 style={{ width: '100%' }}
                 formatter={(value) => `R$ ${value}`.replace('.', ',')}
                 parser={(value) => Number(value!.replace(/R\$\s?|(,*)/g, ''))}
@@ -241,7 +241,7 @@ const CreateEventPage: React.FC = () => {
               name="value2"
               rules={[{ required: true, message: 'Por favor, insira o valor 2' }]}
             >
-              <InputNumber
+              <InputNumber<number>
                 style={{ width: '100%' }}
                 formatter={(value) => `R$ ${value}`.replace('.', ',')}
                 parser={(value) => Number(value!.replace(/R\$\s?|(,*)/g, ''))}
@@ -257,7 +257,7 @@ const CreateEventPage: React.FC = () => {
               name="value3"
               rules={[{ required: true, message: 'Por favor, insira o valor 3' }]}
             >
-              <InputNumber
+              <InputNumber<number>
                 style={{ width: '100%' }}
                 formatter={(value) => `R$ ${value}`.replace('.', ',')}
                 parser={(value) => Number(value!.replace(/R\$\s?|(,*)/g, ''))}
