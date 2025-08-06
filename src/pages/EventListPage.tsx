@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Table, Space, Button, Typography, Card, message, Popconfirm } from 'antd';
-import { EditOutlined, DeleteOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { EditOutlined, DeleteOutlined, ArrowLeftOutlined, PlusOutlined } from '@ant-design/icons';
 import { supabase } from '../lib/supabase';
 import type { Event } from '../types/supabase';
 import './EventListPage.css';
@@ -129,6 +129,15 @@ const EventListPage: React.FC = () => {
         <Card className="event-list-card">
           <div className="event-list-header">
             <Title level={2} className="event-list-title">Gerenciar Cerimônias</Title>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              size="large"
+              onClick={() => navigate('/create-event')}
+              className="create-event-btn"
+            >
+              Criar Nova Cerimônia
+            </Button>
           </div>
           
           <Table
