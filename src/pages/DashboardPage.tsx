@@ -25,8 +25,7 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleManageEvents = () => {
-    // TODO: Navigate to manage events page
-    console.log('Gerenciar eventos');
+    navigate('/events');
   };
 
   const handleViewParticipants = () => {
