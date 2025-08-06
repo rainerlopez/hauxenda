@@ -10,7 +10,8 @@ import {
   Upload, 
   Space,
   message,
-  Divider
+  Divider,
+  InputNumber
 } from "antd";
 import { 
   ArrowLeftOutlined, 
@@ -32,6 +33,9 @@ interface EventFormData {
   pix_key: string;
   guests: string[];
   image?: File;
+  value1: number;
+  value2: number;
+  value3: number;
 }
 
 const CreateEventPage: React.FC = () => {
@@ -92,6 +96,9 @@ const CreateEventPage: React.FC = () => {
         location: values.location,
         pix_key: values.pix_key,
         guests: values.guests || [],
+        value1: values.value1,
+        value2: values.value2,
+        value3: values.value3,
         admin_id: user.id,
         link: '', // Will be updated after we get the ID
         image_url: null
@@ -209,6 +216,54 @@ const CreateEventPage: React.FC = () => {
             >
               <Input
                 placeholder="Ex: exemplo@email.com ou CPF ou telefone"
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Valor 1"
+              name="value1"
+              rules={[{ required: true, message: 'Por favor, insira o valor 1' }]}
+            >
+              <InputNumber
+                style={{ width: '100%' }}
+                formatter={(value) => `R$ ${value}`.replace('.', ',')}
+                parser={(value) => Number(value!.replace(/R\$\s?|(,*)/g, ''))}
+                precision={2}
+                step={0.01}
+                min={0}
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Valor 2"
+              name="value2"
+              rules={[{ required: true, message: 'Por favor, insira o valor 2' }]}
+            >
+              <InputNumber
+                style={{ width: '100%' }}
+                formatter={(value) => `R$ ${value}`.replace('.', ',')}
+                parser={(value) => Number(value!.replace(/R\$\s?|(,*)/g, ''))}
+                precision={2}
+                step={0.01}
+                min={0}
+                size="large"
+              />
+            </Form.Item>
+
+            <Form.Item
+              label="Valor 3"
+              name="value3"
+              rules={[{ required: true, message: 'Por favor, insira o valor 3' }]}
+            >
+              <InputNumber
+                style={{ width: '100%' }}
+                formatter={(value) => `R$ ${value}`.replace('.', ',')}
+                parser={(value) => Number(value!.replace(/R\$\s?|(,*)/g, ''))}
+                precision={2}
+                step={0.01}
+                min={0}
                 size="large"
               />
             </Form.Item>
