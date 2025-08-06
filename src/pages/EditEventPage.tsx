@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+
 import { 
   Button, 
   Card, 
@@ -62,7 +63,7 @@ const EditEventPage: React.FC = () => {
       // Format the data for the form
       form.setFieldsValue({
         name: event.name,
-        datetime: event.datetime ? new Date(event.datetime) : null,
+        datetime: event.datetime ? event.datetime : null,
         location: event.location,
         pix_key: event.pix_key,
         guests: event.guests || []
